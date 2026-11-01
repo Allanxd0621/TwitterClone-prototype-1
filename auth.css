@@ -1,0 +1,166 @@
+
+/* ============================
+   SIMPLE FACEBOOK
+   SIGNUP PAGE - NAVY THEME
+============================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-family: 'Inter', sans-serif;
+
+    background:
+        radial-gradient(circle at top left, #abc3de, transparent 45%),
+        linear-gradient(135deg, #59667a, #0c1e35, #102b49);
+
+    padding: 20px;
+}
+
+/* SIGNUP CONTAINER */
+
+form {
+    width: 100%;
+    max-width: 410px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    padding: 45px 35px;
+
+    background: rgba(16, 37, 65, 0.95);
+
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 18px;
+
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+/* HEADING */
+
+form h1 {
+    color: #f1f5f9;
+    font-size: 27px;
+    font-weight: 800;
+    text-align: center;
+    letter-spacing: 1px;
+
+    margin-bottom: 10px;
+}
+
+/* INPUT FIELDS */
+
+form input {
+    width: 100%;
+    padding: 16px;
+
+    background: #091a2e;
+    border: 1px solid #29415f;
+    border-radius: 10px;
+
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 14px;
+
+    outline: none;
+    transition: 0.3s ease;
+}
+
+form input::placeholder {
+    color: #8497ad;
+}
+
+form input:focus {
+    border-color: #3b82f6;
+    background: #0d223c;
+
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* CREATE BUTTON */
+
+form button {
+    padding: 16px;
+
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+
+    border: none;
+    border-radius: 10px;
+
+    color: white;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+form button:hover {
+    background: linear-gradient(135deg, #1d4ed8, #2563eb);
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+}
+
+form button:active {
+    transform: scale(0.98);
+}
+
+/* ERROR MESSAGE */
+
+form p {
+    color: #ff7777;
+    font-size: 13px;
+    text-align: center;
+}
+
+/* RESPONSIVE DESIGN */
+
+@media (max-width: 480px) {
+    form {
+        padding: 35px 25px;
+    }
+
+    form h1 {
+        font-size: 23px;
+    }
+}
+
+
+.login-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+
+    font-size: 13px;
+}
+
+.login-link p {
+    color: #94a3b8;
+}
+
+.login-link a {
+    color: #60a5fa;
+    font-weight: 700;
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+.login-link a:hover {
+    color: #93c5fd;
+    text-decoration: underline;
+}
