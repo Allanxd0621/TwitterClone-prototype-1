@@ -167,9 +167,12 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
 
 <!--POST SECTION HERE-->
 
+
+<div class="postForm">
 <header>
     <h1>POST SECTION</h1>
-    <div class="postForm">
+</header>
+
         <form method="post">
             <input type="text" name="postTitle" placeholder="Enter Title">
             <input type="text" name="postBody" placeholder="What's on your Mind? shesh">
@@ -178,7 +181,6 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
             <button type="submit" id="postBtn1">POST</button>
         </form>
     </div>
-</header>
 
 
 
