@@ -171,6 +171,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
 <div class="postForm">
 <header>
     <h1>POST SECTION</h1>
+    <button id="postExitBtn">X</button>
 </header>
 
         <form method="post">
