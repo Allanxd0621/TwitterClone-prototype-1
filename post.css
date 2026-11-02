@@ -145,3 +145,26 @@ body > header:last-of-type h1 {
         padding: 18px;
     }
 }
+
+
+/* POST FORM - HIDDEN BY DEFAULT */
+
+.postForm {
+    display: none;
+}
+
+/* POST FORM - VISIBLE */
+
+.postForm.postFormVisible {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    height: 100dvh;
+}
+
+.postForm form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
