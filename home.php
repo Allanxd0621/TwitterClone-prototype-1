@@ -52,7 +52,46 @@ $userData = mysqli_fetch_assoc($resultUser);
    $username = $userData['username'];
 
 
+//POSTINGGGG 
 
+$empty = false;
+$emptyReply = '';
+
+if($_SERVER['REQUEST_METHOD'] == "POST"){
+    if(empty($_POST['postTitle']) || empty($_POST['postBody']) || empty($_POST['poster'])){
+
+        //check if user inputted something if not then error gud 
+        $empty = true;
+        $emptyReply = 'Title or Body needs input';
+
+    }
+    if(!$empty){
+        //if nothing is wrong then upload it into table and then the data from the table echoed in the post holders
+
+        $postTitle = $_POST['postTitle'];
+        $postBody = $_POST['postBody'];
+        $poster = $_POST['poster'];
+
+        $postSql = "INSERT INTO posts (postTitle, postBody , poster) VALUES ('$postTitle' , '$postBody' , '$poster')";
+
+        mysqli_query($cann , $postSql);
+
+
+    }
+}
+
+    $postSql = "SELECT * FROM posts ORDER BY postId DESC";
+
+    $postResult = mysqli_query($cann , $postSql);
+
+    //I will now use while loops to get every row on each column in post table to be put inside our post holders 
+
+   
+
+
+
+
+    
 
 
 ?>
@@ -69,7 +108,7 @@ $userData = mysqli_fetch_assoc($resultUser);
     
     <header>
         <h1>Allan's Twitter </h1>
-        <img src="profileIcon.webp" alt="" id="profileCheck">
+        <img src="../assets/profileIcon.webp" alt="" id="profileCheck">
 <!-- THis will be a button to show the profile section-->
     </header>
 
@@ -91,17 +130,48 @@ $userData = mysqli_fetch_assoc($resultUser);
 
     <div class="devMessage">
         <h1>Hi I am Allan!</h1>
-        <p>This is a website I created as a project to test my php and MySQL skills. The CSS was built by Codex because I hate doing CSS it's so time consuming and repeatative. But I know every single code it gives me I did start with CSS after all. I just did the JavaScript Php, html, and ofcourse the Database.</p>
+        <p>This is a website I created as a project to test my php and MySQL skills. The CSS was built by Codex because I hate doing CSS it's so time consuming and repeatative. But ofcourse I edited some designs since I know every single code it gives me I did start with CSS after all. I just did the JavaScript Php, html, and ofcourse the Database.</p>
     </div>
 
 <!-- This shall be the holder for all of the posts -->
 
-
+<?php while($dataPost = mysqli_fetch_assoc($postResult)){ ?>
     <div class="postContainer">
-        <h1 class="postTitle"></h1>
+        <h3 class="poster">
+            <?= htmlspecialchars($dataPost['poster'])??'' ?>
+         </h3>
+        <h1 class="postTitle">
+            <?= htmlspecialchars($dataPost['postTitle'])??''  ?>
+        </h1>
+        <p class="postBody">
+            <?= htmlspecialchars($dataPost['postBody'])??'' ?>
+        </p>
     </div>
 
+<?php }?>
+
 </main>
+
+<footer>
+    <button id="postBtn">+</button>
+</footer>
+
+
+<!--POST SECTION HERE-->
+
+<header>
+    <h1>POST SECTION</h1>
+    <div class="postForm">
+        <form method="post">
+            <input type="text" name="postTitle" placeholder="Enter Title">
+            <input type="text" name="postBody" placeholder="What's on your Mind? shesh">
+            <input type="hidden" name="poster" value="<?= htmlspecialchars($userData['username'])??'' ?>" readonly> <!--TO KNOW WHO POSTS-->
+            <p id="emptyReply"><?= $emptyReply; ?></p>
+            <button type="submit">POST</button>
+        </form>
+    </div>
+</header>
+
 
 
 <script src="../src/profile.js"></script>
