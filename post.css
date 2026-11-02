@@ -1,0 +1,147 @@
+
+/* INDIVIDUAL POST CONTAINER */
+
+.postContainer {
+    background: #ffffff;
+
+    border: 1px solid #dddfe2;
+    border-radius: 12px;
+
+    padding: 25px;
+    margin-bottom: 20px;
+
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+
+    transition: 0.2s ease;
+}
+
+.postContainer:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* POST AUTHOR */
+
+.poster {
+    color: #1877f2;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+/* POST TITLE */
+
+.postTitle {
+    font-size: 22px;
+    color: #1c1e21;
+    margin-bottom: 12px;
+    overflow-wrap: anywhere;
+}
+
+/* POST BODY */
+
+.postBody {
+    font-size: 15px;
+    color: #606770;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+}
+
+/* POST SECTION HEADER */
+
+body > header:last-of-type {
+    width: 90%;
+    max-width: 550px;
+    margin: 40px auto 100px;
+
+    background: #ffffff;
+    border: 1px solid #dddfe2;
+    border-radius: 12px;
+
+    padding: 25px;
+
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+}
+
+body > header:last-of-type h1 {
+    color: #1877f2;
+    font-size: 22px;
+    margin-bottom: 20px;
+}
+
+/* POST FORM */
+
+.postForm form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.postForm input[type="text"] {
+    width: 100%;
+    padding: 15px;
+
+    background: #f0f2f5;
+    border: 1px solid #dddfe2;
+    border-radius: 8px;
+
+    outline: none;
+    font-family: inherit;
+    font-size: 14px;
+
+    transition: 0.2s ease;
+}
+
+.postForm input[type="text"]:focus {
+    background: #ffffff;
+    border-color: #1877f2;
+    box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.12);
+}
+
+/* POST BUTTON */
+
+.postForm button {
+    width: 100%;
+    padding: 13px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #1877f2;
+    color: white;
+
+    font-size: 15px;
+    font-weight: 700;
+
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.postForm button:hover {
+    background: #166fe5;
+}
+
+/* EMPTY INPUT MESSAGE */
+
+#emptyReply {
+    color: #dc2626;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+    .postContainer {
+        padding: 18px;
+    }
+
+    .postTitle {
+        font-size: 19px;
+    }
+
+    body > header:last-of-type {
+        width: 94%;
+        padding: 18px;
+    }
+}
