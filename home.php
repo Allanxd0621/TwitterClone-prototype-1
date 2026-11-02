@@ -35,7 +35,7 @@ session_start();
 
 $id = $_SESSION['$id'];
 
-$cann = mysqli_connect('localhost' , 'root' , '' , 'simpleFacebook_db');
+$cann = mysqli_connect('sql303.infinityfree.com' , 'if0_43331319' , 'mIlktea12' , 'if0_43331319_allanTwitter_db');
 
 
 if(!$cann){
@@ -74,7 +74,11 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
 
         $postSql = "INSERT INTO posts (postTitle, postBody , poster) VALUES ('$postTitle' , '$postBody' , '$poster')";
 
-        mysqli_query($cann , $postSql);
+    if(mysqli_query($cann, $postSql)){
+
+      header("Location: home.php");
+      exit(); //after posting it would also refresh the home page 
+        }
 
 
     }
@@ -83,6 +87,8 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
     $postSql = "SELECT * FROM posts ORDER BY postId DESC";
 
     $postResult = mysqli_query($cann , $postSql);
+
+
 
     //I will now use while loops to get every row on each column in post table to be put inside our post holders 
 
@@ -169,7 +175,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
             <input type="text" name="postBody" placeholder="What's on your Mind? shesh">
             <input type="hidden" name="poster" value="<?= htmlspecialchars($userData['username'])??'' ?>" readonly> <!--TO KNOW WHO POSTS-->
             <p id="emptyReply"><?= $emptyReply; ?></p>
-            <button type="submit">POST</button>
+            <button type="submit" id="postBtn1">POST</button>
         </form>
     </div>
 </header>
@@ -177,5 +183,6 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
 
 
 <script src="../src/profile.js"></script>
+<script src="../src/post.js"></script>
 </body>
 </html>
