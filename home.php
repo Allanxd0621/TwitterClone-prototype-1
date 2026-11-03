@@ -54,40 +54,118 @@ $userData = mysqli_fetch_assoc($resultUser);
 
 //POSTINGGGG 
 
+// POSTING
+
 $empty = false;
 $emptyReply = '';
 
-if($_SERVER['REQUEST_METHOD'] == "POST"){
-    if(empty($_POST['postTitle']) || empty($_POST['postBody']) || empty($_POST['poster'])){
+if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
-        //check if user inputted something if not then error gud 
+    if (empty($_POST['postTitle']) || empty($_POST['postBody'])) {
         $empty = true;
         $emptyReply = 'Title or Body needs input';
-
     }
-    if(!$empty){
-        //if nothing is wrong then upload it into table and then the data from the table echoed in the post holders
 
-        $postTitle = $_POST['postTitle'];
-        $postBody = $_POST['postBody'];
-        $poster = $_POST['poster'];
+    if (!$empty) {
 
-        $postSql = "INSERT INTO posts (postTitle, postBody , poster) VALUES ('$postTitle' , '$postBody' , '$poster')";
+        $postTitle = trim($_POST['postTitle']);
+        $postBody = trim($_POST['postBody']);
+        $poster = $username;
 
-    if(mysqli_query($cann, $postSql)){
+        // No photo by default
+        $photoName = null;
 
-      header("Location: home.php");
-      exit(); //after posting it would also refresh the home page 
+        // CHECK IF USER UPLOADED A PHOTO
+        if (isset($_FILES['postPhoto']) &&
+            $_FILES['postPhoto']['error'] != UPLOAD_ERR_NO_FILE) {
+
+            if ($_FILES['postPhoto']['error'] != UPLOAD_ERR_OK) {
+                $empty = true;
+                $emptyReply = 'Photo upload failed.';
+            }
+
+            elseif ($_FILES['postPhoto']['size'] > 5 * 1024 * 1024) {
+                $empty = true;
+                $emptyReply = 'Photo must not exceed 5MB.';
+            }
+
+            else {
+
+                // CHECK IMAGE TYPE
+                $finfo = new finfo(FILEINFO_MIME_TYPE);
+                $mime = $finfo->file($_FILES['postPhoto']['tmp_name']);
+
+                $allowedTypes = [
+                    'image/jpeg' => 'jpg',
+                    'image/png' => 'png',
+                    'image/webp' => 'webp'
+                ];
+
+                if (!isset($allowedTypes[$mime])) {
+                    $empty = true;
+                    $emptyReply = 'Only JPG, PNG, and WEBP images are allowed.';
+                }
+
+                else {
+
+                    // GENERATE UNIQUE FILENAME
+                    $photoName = bin2hex(random_bytes(16)) . '.' . $allowedTypes[$mime];
+
+                    // DESTINATION FOLDER
+                    $uploadPath = __DIR__ . '/../postPhotos/' . $photoName;
+
+                    if (!move_uploaded_file(
+                        $_FILES['postPhoto']['tmp_name'],
+                        $uploadPath
+                    )) {
+                        $empty = true;
+                        $emptyReply = 'Unable to save uploaded photo.';
+                    }
+                }
+            }
         }
 
+        // INSERT POST INTO DATABASE
+        if (!$empty) {
 
+            $postSql = "INSERT INTO posts
+                        (postTitle, postBody, poster, postPhoto)
+                        VALUES (?, ?, ?, ?)";
+
+            $stmt = mysqli_prepare($cann, $postSql);
+
+            mysqli_stmt_bind_param(
+                $stmt,
+                "ssss",
+                $postTitle,
+                $postBody,
+                $poster,
+                $photoName
+            );
+
+            if (mysqli_stmt_execute($stmt)) {
+
+                header("Location: home.php");
+                exit();
+
+            } else {
+
+                // Remove uploaded image if database insertion fails
+                if ($photoName !== null) {
+                    unlink(__DIR__ . '/../postPhotos/' . $photoName);
+                }
+
+                $emptyReply = 'Failed to create post.';
+            }
+        }
     }
 }
 
-    $postSql = "SELECT * FROM posts ORDER BY postId DESC";
+// RETRIEVE POSTS
+$postSql = "SELECT * FROM posts ORDER BY postId DESC";
+$postResult = mysqli_query($cann, $postSql);
 
-    $postResult = mysqli_query($cann , $postSql);
-
+    
 
 
     //I will now use while loops to get every row on each column in post table to be put inside our post holders 
@@ -110,12 +188,12 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
     <title>Home Page</title>
     <link rel="stylesheet" href="../assets/profile.css">
     <link rel="stylesheet" href="../assets/home.css">
-    <link rel="stylesheet" href="../assets/post.css">
+    <link rel="stylesheet" href="../assets/post.css?v=2">
 </head>
 <body>
     
     <header>
-        <h1>Allan's Twitter </h1>
+        <h1>Allan's Newsfeed</h1>
         <img src="../assets/profileIcon.webp" alt="" id="profileCheck">
 <!-- THis will be a button to show the profile section-->
     </header>
@@ -141,20 +219,107 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
         <p>This is a website I created as a project to test my php and MySQL skills. The CSS was built by Codex because I hate doing CSS it's so time consuming and repeatative. But ofcourse I edited some designs since I know every single code it gives me I did start with CSS after all. I just did the JavaScript Php, html, and ofcourse the Database.</p>
     </div>
 
+
+
+<?php 
+
+//THIS IS FOR LIKE AND DISLIKE 
+
+//if naay like inputted then get the post ID of that specific post and update the likes row + 1
+
+if (isset($_POST['like'])) {
+
+    $postId = (int) $_POST['postId'];
+
+    $sql = "UPDATE posts SET likes = likes + 1 WHERE postId = ?";
+    $stmt = mysqli_prepare($cann, $sql);
+
+    mysqli_stmt_bind_param($stmt, "i", $postId);
+    mysqli_stmt_execute($stmt);
+
+    header("Location: home.php");
+    exit();
+}
+
+//same thing if nay inputted dislike get the post id in that post and update its dislike row by increment 1
+
+if (isset($_POST['dislike'])) {
+
+    $postId = (int) $_POST['postId'];
+
+    $sql = "UPDATE posts SET dislikes = dislikes + 1 WHERE postId = ?";
+    $stmt = mysqli_prepare($cann, $sql);
+
+    mysqli_stmt_bind_param($stmt, "i", $postId);
+    mysqli_stmt_execute($stmt);
+
+    header("Location: home.php");
+    exit();
+}
+
+//for the like and dislike buttons lets just create two separate forms each has inputs of likes and dislikes and two individual submit buttons 
+?>
+
+
+
 <!-- This shall be the holder for all of the posts -->
 
 <?php while($dataPost = mysqli_fetch_assoc($postResult)){ ?>
+   
     <div class="postContainer">
-        <h3 class="poster">
-            <?= htmlspecialchars($dataPost['poster'])??'' ?>
-         </h3>
-        <h1 class="postTitle">
-            <?= htmlspecialchars($dataPost['postTitle'])??''  ?>
-        </h1>
-        <p class="postBody">
-            <?= htmlspecialchars($dataPost['postBody'])??'' ?>
-        </p>
-    </div>
+
+    <h3 class="poster">
+        <?= htmlspecialchars($dataPost['poster']) ?>
+    </h3>
+
+    <h1 class="postTitle">
+        <?= htmlspecialchars($dataPost['postTitle']) ?>
+    </h1>
+
+    <?php if (!empty($dataPost['postPhoto'])) { ?>
+        <img
+            src="../postPhotos/<?= htmlspecialchars($dataPost['postPhoto']) ?>"
+            alt="Post Photo"
+            class="postPhoto"
+        >
+    <?php } ?>
+
+    <p class="postBody">
+        <?= htmlspecialchars($dataPost['postBody']) ?>
+    </p>
+
+    <?php ?>
+
+
+
+<div class="likeAndDislike">
+
+    <form method="post">
+        <input type="hidden" 
+               name="postId" 
+               value="<?= $dataPost['postId'] ?>">
+
+        <button type="submit" name="like">
+            ♡ <?= $dataPost['likes'] ?>
+        </button>
+    </form>
+
+    <form method="post">
+        <input type="hidden" 
+               name="postId" 
+               value="<?= $dataPost['postId'] ?>">
+
+        <button type="submit" name="dislike">
+            ☹ <?= $dataPost['dislikes'] ?>
+        </button>
+    </form>
+
+</div>
+
+</div>
+
+
+
 
 <?php }?>
 
@@ -174,9 +339,10 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
     <button id="postExitBtn">X</button>
 </header>
 
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             <input type="text" name="postTitle" placeholder="Enter Title">
             <input type="text" name="postBody" placeholder="What's on your Mind? shesh">
+            <input type="file" name="postPhoto">
             <input type="hidden" name="poster" value="<?= htmlspecialchars($userData['username'])??'' ?>" readonly> <!--TO KNOW WHO POSTS-->
             <p id="emptyReply"><?= $emptyReply; ?></p>
             <button type="submit" id="postBtn1">POST</button>
